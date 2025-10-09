@@ -50,6 +50,8 @@ void singlyLinkListTest()
     SLL.show_list();
     SLL.remove_once(10);
     SLL.show_list();
+    SLL.reverse();
+    SLL.show_list();
 }
 
 int main()
