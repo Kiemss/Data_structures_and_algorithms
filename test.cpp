@@ -53,9 +53,10 @@ void singlyLinkListTest()
     SLL.remove_once(10);
     SLL.show_list();
     SLL.reverse();
+    cout << "遍历SLL链表:";
     SLL.show_list();
     try {
-        cout << SLL.get_last_k(2) << endl;
+        cout << "SLL链表倒数第2个节点的数值:" << SLL.get_last_k(2) << endl;
     }
     catch(const std::out_of_range& e)
     {
@@ -75,6 +76,11 @@ void singlyLinkListTest()
     sort1.show_list();
     sort2.show_list();
 
+    cout << "SLL链表长度：" << SLL.get_length() << endl;
+    SLL.rotate_backward(3);
+    SLL.show_list();
+    SLL.rotate_backward(0);
+    SLL.show_list();
 }
 
 int main()

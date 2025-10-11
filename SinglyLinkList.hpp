@@ -24,6 +24,7 @@ class SinglyLinkList
 {
     private:
     std::unique_ptr<Node<ElementType>> m_pHead;//指向链表的头节点
+
     public:
     //构造函数
     SinglyLinkList();
@@ -48,9 +49,213 @@ class SinglyLinkList
     //找倒数第k个节点的值
     ElementType get_last_k(size_t index);
     //合并两个从小到大排序的有序链表
-    template<typename T>
+    template<typename T>//友元函数需要再写一次template
     friend void merge_sort_list(SinglyLinkList<T>& main_link,SinglyLinkList<T>& sec_link);
+    //判断链表是否有环，求环的入口节点
+    /*⭐由于使用智能指针管理，所以该单链表一般不会出现环，下面代码使用原始指针仿写。
+    -判断环的方法：快慢指针，fast_ptr遍历速度是slow_ptr遍历速度的两倍
+    两者同时从头开始遍历，如果再次相遇则说明有环
+    -找到环的入口：对于有环链表，线性部分长度x，入口到两指针相遇长度y，剩余部分长度z
+    列方程2(x+y) = x + y + n*(z + y)
+    解得       x = (n-1)*(y+z) + z
+    由于快指针会在慢指针走完一圈前赶上慢指针，因此n=1，代入得x=z
+    因此可以：让两指针分别从头节点和两指针相遇节点处向后遍历
+    当两节点相遇时，所在处就是环入口
+    // 链表判断是否有环？求环的入口节点
+template<typename ElementType>
+class CycleDetector 
+{
+public:
+    // 检测链表是否有环
+    static bool has_cycle(Node<ElementType>* head) 
+    {
+        if (head == nullptr || head->next_ == nullptr) 
+        {
+            return false;
+        }
+        
+        Node<ElementType>* slow_ptr = head;
+        Node<ElementType>* fast_ptr = head;
+        
+        while (fast_ptr != nullptr && fast_ptr->next_ != nullptr) 
+        {
+            slow_ptr = slow_ptr->next_.get();
+            fast_ptr = fast_ptr->next_->next_.get();
+            
+            if (slow_ptr == fast_ptr) 
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
     
+    // 找到环的入口节点
+    static Node<ElementType>* find_cycle_entry(Node<ElementType>* head) 
+    {
+        if (head == nullptr || head->next_ == nullptr) 
+        {
+            return nullptr;
+        }
+        
+        Node<ElementType>* slow_ptr = head;
+        Node<ElementType>* fast_ptr = head;
+        bool has_cycle = false;
+        
+        // 第一步：检测是否有环，并找到相遇点
+        while (fast_ptr != nullptr && fast_ptr->next_ != nullptr) 
+        {
+            slow_ptr = slow_ptr->next_.get();
+            fast_ptr = fast_ptr->next_->next_.get();
+            
+            if (slow_ptr == fast_ptr) 
+            {
+                has_cycle = true;
+                break;
+            }
+        }
+        
+        // 如果没有环，返回nullptr
+        if (!has_cycle) 
+        {
+            return nullptr;
+        }
+        
+        // 第二步：找到环的入口
+        // 将一个指针重置到头部，两个指针以相同速度移动
+        slow_ptr = head;
+        
+        while (slow_ptr != fast_ptr) 
+        {
+            slow_ptr = slow_ptr->next_.get();
+            fast_ptr = fast_ptr->next_.get();
+        }
+        
+        // 相遇点即为环的入口
+        return slow_ptr;
+    }
+    
+    // 创建测试用的有环链表（仅用于演示，实际中不要这样使用智能指针）
+    static void create_cycle_for_test(SinglyLinkList<ElementType>& list, int cycle_entry_index) 
+    {
+        if (list.m_pHead->next_ == nullptr) 
+        {
+            return;
+        }
+        
+        // 找到尾节点
+        Node<ElementType>* tail = list.m_pHead.get();
+        while (tail->next_ != nullptr) 
+        {
+            tail = tail->next_.get();
+        }
+        
+        // 找到环入口节点
+        Node<ElementType>* entry = list.m_pHead.get();
+        for (int i = 0; i <= cycle_entry_index && entry != nullptr; i++) 
+        {
+            entry = entry->next_.get();
+        }
+        
+        if (entry != nullptr) 
+        {
+            // 注意：这实际上会破坏智能指针的所有权机制，仅用于测试
+            // 在实际使用中应该避免这样的操作
+            tail->next_.release();  // 释放尾节点的next所有权
+            tail->next_.reset(entry);  // 手动设置为环入口，创建环
+        }
+    }
+    
+    // 计算环的长度
+    static int cycle_length(Node<ElementType>* head) 
+    {
+        Node<ElementType>* entry = find_cycle_entry(head);
+        
+        if (entry == nullptr) 
+        {
+            return 0;  // 无环
+        }
+        
+        int length = 1;
+        Node<ElementType>* current = entry->next_.get();
+        
+        while (current != entry) 
+        {
+            length++;
+            current = current->next_.get();
+        }
+        
+        return length;
+    }
+};
+    */
+    //判断两个单链表是否相交，求交点节点
+    /*⭐智能指针管理导致一般不会发生这种情况。
+    -判断两个单链表是否相交的方法：判断两个链表的尾节点地址是否相同即可
+    -求交点节点：两链表相交的长度x,非相交的长度分别为y,z
+    两指针从两链表头开始，较长链表指针先走y-z步，然后两指针同时往后走，相遇处就是链表相交处。
+        // 找到相交节点（如果存在）
+    static Node<ElementType>* find_intersection_node(Node<ElementType>* head1, Node<ElementType>* head2) 
+    {
+        if (head1 == nullptr || head2 == nullptr) 
+        {
+            return nullptr;
+        }
+        
+        // 计算两个链表的长度和尾节点
+        int len1 = 1;
+        Node<ElementType>* tail1 = head1;
+        while (tail1->next_ != nullptr) 
+        {
+            len1++;
+            tail1 = tail1->next_.get();
+        }
+        
+        int len2 = 1;
+        Node<ElementType>* tail2 = head2;
+        while (tail2->next_ != nullptr) 
+        {
+            len2++;
+            tail2 = tail2->next_.get();
+        }
+        
+        // 如果尾节点不同，则肯定不相交
+        if (tail1 != tail2) 
+        {
+            return nullptr;
+        }
+        
+        // 让长的链表先走差值步
+        Node<ElementType>* long_list = (len1 > len2) ? head1 : head2;
+        Node<ElementType>* short_list = (len1 > len2) ? head2 : head1;
+        int diff = std::abs(len1 - len2);
+        
+        for (int i = 0; i < diff; i++) 
+        {
+            long_list = long_list->next_.get();
+        }
+        
+        // 同时遍历两个链表，寻找相交点
+        while (long_list != nullptr && short_list != nullptr) 
+        {
+            if (long_list == short_list) 
+            {
+                return long_list;
+            }
+            long_list = long_list->next_.get();
+            short_list = short_list->next_.get();
+        }
+        
+        return nullptr;
+    }
+    */
+    //旋转链表，相当于将末尾n个节点移到前面
+    void rotate_backward(size_t steps);
+
+    //获取链表长度
+    size_t get_length();
+
 };
 
 //构造函数
@@ -284,53 +489,8 @@ ElementType SinglyLinkList<ElementType>::get_last_k(size_t index)
     
     return slow_ptr->value_;
 }
- 
-/*废案，代码写的一坨
-template<typename ElementType>
-void merge_list(SinglyLinkList<ElementType>& main_link,SinglyLinkList<ElementType>& sec_link)
-{
-    //std::unique_ptr<Node<ElementType>> main_slow_ptr = std::move(main_link.m_pHead);
-    Node<ElementType>* main_slow_ptr = (main_link.m_pHead).get();
-    std::unique_ptr<Node<ElementType>> main_fast_ptr =std::move((main_link.m_pHead)->next_);
-    std::unique_ptr<Node<ElementType>> sec_ptr = std::move((sec_link.m_pHead)->next_);
 
-    while(sec_ptr != nullptr && main_fast_ptr != nullptr)
-    {
-        if(sec_ptr->value_ <= main_fast_ptr->value_)
-        {
-            main_slow_ptr->next_ = std::move(sec_ptr);
-            sec_ptr = std::move((main_slow_ptr->next_)->next_);
-            (main_slow_ptr->next_)->next_ = std::move(main_fast_ptr);
-            main_slow_ptr = (main_slow_ptr->next_).get();
-            main_fast_ptr = std::move(main_slow_ptr->next_);
-            if(sec_ptr == nullptr)
-            {
-                return;
-            }
-        }
-        else
-        {
-            main_slow_ptr->next_ = std::move(main_fast_ptr);
-             main_slow_ptr = main_slow_ptr->next_.get();//移动慢指针
-            main_fast_ptr = std::move((main_slow_ptr->next_)->next_);
-        }
-        if(main_fast_ptr == nullptr)
-        {
-            main_slow_ptr->next_ = std::move(sec_ptr);
-        }
-    }
-
-     if(sec_ptr != nullptr)
-    {
-        main_slow_ptr->next_ = std::move(sec_ptr);
-    }
-    
-    // 清空次要链表
-    sec_link.m_pHead->next_ = nullptr;
-    return;
-}
-*/
-
+#if 1//自己写的，需要用五个指针，拼尽全力写的依托
 //合并两个从小到大排序的有序链表
 template<typename ElementType>
 void merge_sort_list(SinglyLinkList<ElementType>& main_link,SinglyLinkList<ElementType>& sec_link)
@@ -401,6 +561,91 @@ void merge_sort_list(SinglyLinkList<ElementType>& main_link,SinglyLinkList<Eleme
         {
         throw std::logic_error("出现main_ptr和sec_ptr同时为空的不合逻辑情况");
         }
+    return;
+}
+#endif
+ 
+#if 0 //AI给出的最佳优化方案，使用递归函数辅助+新建链表，仅用两个链表头就解决了问题
+// 辅助递归函数
+template<typename ElementType>
+std::unique_ptr<Node<ElementType>> merge_recursive(
+    std::unique_ptr<Node<ElementType>> a,
+    std::unique_ptr<Node<ElementType>> b)
+{
+    if (!a) return b;
+    if (!b) return a;
+    
+    if (a->value_ <= b->value_) {
+        a->next_ = merge_recursive(std::move(a->next_), std::move(b));
+        return a;
+    } else {
+        b->next_ = merge_recursive(std::move(a), std::move(b->next_));
+        return b;
+    }
+}
+
+// 主函数 - 只需要处理两个链表头！
+template<typename ElementType>
+void merge_sort_list(SinglyLinkList<ElementType>& main_list, 
+                       SinglyLinkList<ElementType>& sec_list)
+{
+    main_list.m_pHead->next_ = merge_recursive(
+        std::move(main_list.m_pHead->next_),
+        std::move(sec_list.m_pHead->next_)
+    );
+}
+#endif
+
+//获取链表长度
+template<typename ElementType>
+size_t SinglyLinkList<ElementType>::get_length()
+{
+    Node<ElementType>* count_ptr = (this->m_pHead)->next_.get();
+    int length {};
+    while(count_ptr != nullptr)
+    {
+        count_ptr = (count_ptr->next_).get();
+        length++;
+    }
+    return length;
+}
+
+//旋转链表，相当于将末尾n个节点移到前面
+template<typename ElementType>
+void SinglyLinkList<ElementType>::rotate_backward(size_t steps)
+{
+    //先获取链表长度
+    int length = this->get_length();
+
+    //计算n
+    size_t index = steps;
+    if(length <= steps)
+    {
+        index = steps % length;
+    }
+    
+
+    //找到倒数第n个节点
+    Node<ElementType>* slow_ptr = (this->m_pHead).get();
+    Node<ElementType>* fast_ptr = (this->m_pHead).get();
+    if(index == 0)
+    {
+        return;
+    }    
+    for(size_t i = 0;i < index;i++)
+    {
+        fast_ptr = (fast_ptr->next_).get();
+    }
+    //智能指针获取对象的原因，相比获取倒数第k个节点的代码，两指针提前一格停下
+    while(fast_ptr->next_ != nullptr)
+    {
+        fast_ptr = (fast_ptr->next_).get();
+        slow_ptr = (slow_ptr->next_).get();
+    }
+
+    //移动节点
+    fast_ptr->next_ = std::move((this->m_pHead)->next_);
+    (this->m_pHead)->next_ = std::move(slow_ptr->next_);
     return;
 }
 
