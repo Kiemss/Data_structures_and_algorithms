@@ -45,6 +45,12 @@ class SinglyLinkList
 
     //链表逆序
     void reverse();
+    //找倒数第k个节点的值
+    ElementType get_last_k(size_t index);
+    //合并两个从小到大排序的有序链表
+    template<typename T>
+    friend void merge_sort_list(SinglyLinkList<T>& main_link,SinglyLinkList<T>& sec_link);
+    
 };
 
 //构造函数
@@ -101,6 +107,11 @@ void SinglyLinkList<ElementType>::push_front(ElementType val)
 template<typename ElementType>
 void SinglyLinkList<ElementType>::show_list()
 {
+    if(this->m_pHead->next_ == nullptr)
+    {
+        std::cout << "该链表为空！"  << std::endl;
+        return;
+    }
     Node<ElementType>* current_ptr = (this->m_pHead)->next_.get();
     while(current_ptr != nullptr)
     {
@@ -217,6 +228,7 @@ void SinglyLinkList<ElementType>::reverse()
     */
 
     //全部使用智能指针，先将管理节点以及成员的指针move掉，防止冲突
+    //改变节点->用智能指针，遍历节点->用原始指针
     if((this->m_pHead)->next_ == nullptr)
     {
         return;
@@ -239,3 +251,156 @@ void SinglyLinkList<ElementType>::reverse()
     }
     m_pHead->next_ = std::move(prev);
 }
+
+//获取倒数第k个节点的值
+//这里采用双指针的方法，比起遍历两遍的优点：O的系数更小，两个指针一起遍历时慢指针读取速度快
+template<typename ElementType>
+ElementType SinglyLinkList<ElementType>::get_last_k(size_t index)
+{
+    Node<ElementType>* slow_ptr = (this->m_pHead).get();
+    Node<ElementType>* fast_ptr = (this->m_pHead).get();
+
+    if(index == 0)//异常控制
+    {
+        throw std::out_of_range("索引为0!");
+    }    
+
+    //先移动快指针
+    for(size_t i = 0;i < index;i++)
+    {
+        fast_ptr = (fast_ptr->next_).get();
+        if(fast_ptr == nullptr)//异常控制
+        {
+            throw std::out_of_range("索引超出范围！");
+        }
+    }
+
+    //再两个指针一起移动，当快指针位空时，慢指针便指向倒数第k个节点
+    while(fast_ptr != nullptr)
+    {
+        fast_ptr = (fast_ptr->next_).get();
+        slow_ptr = (slow_ptr->next_).get();
+    }
+    
+    return slow_ptr->value_;
+}
+ 
+/*废案，代码写的一坨
+template<typename ElementType>
+void merge_list(SinglyLinkList<ElementType>& main_link,SinglyLinkList<ElementType>& sec_link)
+{
+    //std::unique_ptr<Node<ElementType>> main_slow_ptr = std::move(main_link.m_pHead);
+    Node<ElementType>* main_slow_ptr = (main_link.m_pHead).get();
+    std::unique_ptr<Node<ElementType>> main_fast_ptr =std::move((main_link.m_pHead)->next_);
+    std::unique_ptr<Node<ElementType>> sec_ptr = std::move((sec_link.m_pHead)->next_);
+
+    while(sec_ptr != nullptr && main_fast_ptr != nullptr)
+    {
+        if(sec_ptr->value_ <= main_fast_ptr->value_)
+        {
+            main_slow_ptr->next_ = std::move(sec_ptr);
+            sec_ptr = std::move((main_slow_ptr->next_)->next_);
+            (main_slow_ptr->next_)->next_ = std::move(main_fast_ptr);
+            main_slow_ptr = (main_slow_ptr->next_).get();
+            main_fast_ptr = std::move(main_slow_ptr->next_);
+            if(sec_ptr == nullptr)
+            {
+                return;
+            }
+        }
+        else
+        {
+            main_slow_ptr->next_ = std::move(main_fast_ptr);
+             main_slow_ptr = main_slow_ptr->next_.get();//移动慢指针
+            main_fast_ptr = std::move((main_slow_ptr->next_)->next_);
+        }
+        if(main_fast_ptr == nullptr)
+        {
+            main_slow_ptr->next_ = std::move(sec_ptr);
+        }
+    }
+
+     if(sec_ptr != nullptr)
+    {
+        main_slow_ptr->next_ = std::move(sec_ptr);
+    }
+    
+    // 清空次要链表
+    sec_link.m_pHead->next_ = nullptr;
+    return;
+}
+*/
+
+//合并两个从小到大排序的有序链表
+template<typename ElementType>
+void merge_sort_list(SinglyLinkList<ElementType>& main_link,SinglyLinkList<ElementType>& sec_link)
+{
+    //主指针和副指针
+    Node<ElementType>* main_ptr = (main_link.m_pHead->next_).get();
+    Node<ElementType>* sec_ptr = (sec_link.m_pHead->next_).get();
+
+     //指向主链表最后一个节点的last指针
+    Node<ElementType>* last_ptr = (main_link.m_pHead).get();
+
+    //最后再定义两智能指针，防止上面的原始指针指向错误
+    std::unique_ptr<Node<ElementType>> unique_main_ptr = nullptr;
+    std::unique_ptr<Node<ElementType>> unique_sec_ptr = std::move(sec_link.m_pHead->next_);
+
+
+    enum  MergeSolution
+    { 
+        main = 0,
+        sec = 1
+    };
+
+    //bool um_first = true;
+
+    int solution = main;
+    while(main_ptr != nullptr && sec_ptr != nullptr)
+    {
+        if(main_ptr->value_ <= sec_ptr->value_)//main更大
+        {   
+            if(solution == sec)
+            {
+                unique_sec_ptr = std::move(last_ptr->next_);
+                last_ptr->next_ = std::move(unique_main_ptr);
+            }
+            last_ptr = (last_ptr->next_).get();
+            main_ptr = (main_ptr->next_).get();
+            solution = main;
+        }
+        else if(main_ptr->value_ > sec_ptr->value_)    //sec更大
+        {
+            if(solution == main)
+            {
+                /*
+                if(um_first == true)
+                {
+                    um_first = false;
+                    main_link.m_pHead->next_ = std::move(unique_main_ptr);
+                }
+                */
+                unique_main_ptr = std::move(last_ptr->next_);
+                last_ptr->next_ = std::move(unique_sec_ptr);
+            }   
+            last_ptr = (last_ptr->next_).get();
+            sec_ptr = (sec_ptr->next_).get();
+            solution = sec;
+        }
+    }
+        //下面处理一边遍历到空
+        if(main_ptr == nullptr && sec_ptr != nullptr)
+        {
+            last_ptr->next_ = std::move(unique_sec_ptr);
+        }
+        else if(sec_ptr == nullptr && main_ptr != nullptr)
+        {
+            last_ptr->next_ = std::move(unique_main_ptr);
+        }   
+        else
+        {
+        throw std::logic_error("出现main_ptr和sec_ptr同时为空的不合逻辑情况");
+        }
+    return;
+}
+

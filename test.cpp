@@ -1,5 +1,6 @@
 #include <iostream>
 #include <ctime>
+#include <stdexcept> 
 #include "array.hpp"
 #include"SinglyLinkList.hpp"
 
@@ -47,11 +48,33 @@ void singlyLinkListTest()
     cout << endl;
     SLL.show_list();
     SLL.push_back(10);
+    SLL.push_front(10);
     SLL.show_list();
     SLL.remove_once(10);
     SLL.show_list();
     SLL.reverse();
     SLL.show_list();
+    try {
+        cout << SLL.get_last_k(2) << endl;
+    }
+    catch(const std::out_of_range& e)
+    {
+        cout << "发现异常：" << e.what() << endl;
+    }
+
+    SinglyLinkList<int> sort2;
+    SinglyLinkList<int> sort1;
+    sort1.push_back(1);
+    sort1.push_back(4);
+    sort1.push_back(5);
+    sort2.push_back(2);
+    sort2.push_back(3);
+    sort1.show_list();
+    sort2.show_list();
+    merge_sort_list(sort1,sort2);
+    sort1.show_list();
+    sort2.show_list();
+
 }
 
 int main()
