@@ -6,7 +6,8 @@
 
 //使用了智能指针
 
-//节点类型定义到外面，方便后续操作
+namespace SinglyLinkListNameSpace
+{
 template<typename ElementType>
 struct Node
 {
@@ -18,6 +19,7 @@ struct Node
     //Node(ElementType value) : value_(value) , next_(nullptr){}
     //Node() = delete;//管提供了构造函数不会生成默认构造函数。这句代码的用处是明令禁止
 };
+
 
 template<typename ElementType>
 class SinglyLinkList
@@ -648,4 +650,4 @@ void SinglyLinkList<ElementType>::rotate_backward(size_t steps)
     (this->m_pHead)->next_ = std::move(slow_ptr->next_);
     return;
 }
-
+}

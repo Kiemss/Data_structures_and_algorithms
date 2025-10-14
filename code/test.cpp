@@ -1,15 +1,17 @@
 #include <iostream>
 #include <ctime>
 #include <stdexcept> 
-#include "array.hpp"
-#include"SinglyLinkList.hpp"
+#include "Array.hpp"
+#include "SinglyLinkList.hpp"
+#include "SinglyCircularLinkList.hpp"
 
 using std::cout;
 using std::endl;
 
 void arrayTest()
 {
-        Array<int> arr;
+    using namespace ArrayNameSpace;
+    Array<int> arr;
     srand(time(0));
     for(int i = 0; i < 10; i++)
     {
@@ -37,6 +39,7 @@ void arrayTest()
 
 void singlyLinkListTest()
 {
+    using namespace SinglyLinkListNameSpace;
     SinglyLinkList<int> SLL;
     srand(time(0));
     for(int i = 0;i < 10;i++)
@@ -83,8 +86,30 @@ void singlyLinkListTest()
     SLL.show_list();
 }
 
+void singlyCircularLinkListTest()
+{
+    using namespace SinglyCircularLinkListNameSpace;
+    SinglyCircularLinkList<int> SCLL1;
+    SCLL1.show_list();
+    cout << SCLL1.delete_first(1) << endl;
+        for(int i = 0;i < 10;i++)
+    {
+        int val = rand() % 100;
+        SCLL1.push_back(val);
+        cout << val << " ";
+    }
+    cout << endl;
+    SCLL1.push_back(114514);
+    SCLL1.push_front(1919180);
+    SCLL1.show_list();
+    cout << SCLL1.delete_first(114514) << endl;
+    cout << SCLL1.delete_first(99999) << endl;
+    SCLL1.show_list();
+    SCLL1.joseph(3);
+}
+
 int main()
 {
-    singlyLinkListTest();
+    singlyCircularLinkListTest();
     return 0;
 }

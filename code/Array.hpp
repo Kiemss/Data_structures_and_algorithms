@@ -12,6 +12,8 @@ using std::cout;
 using std::endl;
 using std::cin;
 
+namespace ArrayNameSpace
+{
 template<typename ElementType>//声明模板类
 class Array : public LinearList<ElementType>//数组实现.⭐注意继承的是类模板而不是类，要写<ElementType>
 {
@@ -377,4 +379,5 @@ int better_delete_element(ElementType* arr, size_t arr_size, const ElementType& 
     }
     
     return slow - arr;        // 返回新长度
+}
 }
