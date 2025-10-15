@@ -6,7 +6,8 @@
 #include "SinglyCircularLinkList.hpp"
 #include "DoublyLinkList.hpp"
 #include "DoublyCircularLinkList.hpp"
-
+#include "SeqStack.hpp"
+#include "LinkStack.hpp"
 using std::cout;
 using std::endl;
 
@@ -137,8 +138,50 @@ void doublyCircularLinkListTest()
     DCLL1.show_list();
 }
 
+void seqStackTest()
+{
+    using namespace SeqStackNameSpace;
+    SeqStack<int> SS1;
+    try{
+        SS1.pop();
+    }
+    catch(const std::runtime_error& e)
+    {
+        cout << "删除时发现异常：" << e.what() << endl;
+    }
+    SS1.push(114514);
+    cout << "栈顶元素是：" << SS1.top() << endl;
+    SS1.push(1919180);
+    cout << "栈顶元素是：" << SS1.top() << endl;
+    cout << "该栈是否为空：" << SS1.empty() << endl;
+    cout << "该栈的大小是：" << SS1.size() << endl;
+    SS1.pop();
+    cout << "栈顶元素是：" << SS1.top() << endl;
+}
+
+void linkStackTest()
+{
+    using namespace LinkStackNameSpace;
+    LinkStack<int> SS1;
+    try{
+        SS1.pop();
+    }
+    catch(const std::runtime_error& e)
+    {
+        cout << "删除时发现异常：" << e.what() << endl;
+    }
+    SS1.push(114514);
+    cout << "栈顶元素是：" << SS1.top() << endl;
+    SS1.push(1919180);
+    cout << "栈顶元素是：" << SS1.top() << endl;
+    cout << "该栈是否为空：" << SS1.empty() << endl;
+    cout << "该栈的大小是：" << SS1.size() << endl;
+    SS1.pop();
+    cout << "栈顶元素是：" << SS1.top() << endl;
+}
+
 int main()
 {
-    doublyCircularLinkListTest();
+    linkStackTest();
     return 0;
 }
