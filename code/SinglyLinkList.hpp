@@ -14,7 +14,10 @@ struct Node
     //仅允许ElementType是系统内置类型和有默认构造函数的类
     ElementType value_;
     std::unique_ptr<Node<ElementType>> next_;
-    Node( ElementType value = ElementType()) : value_(value) ,next_ (nullptr){}//调用了ElementType类型的默认构造函数
+    Node( ElementType value = ElementType()) 
+    : value_(value) 
+    ,next_ (nullptr)
+    {}//调用了ElementType类型的默认构造函数
     //下面的是废案，强制要求提供初始化参数，这和链表头节点作为不存储数据的哨兵节点矛盾了
     //Node(ElementType value) : value_(value) , next_(nullptr){}
     //Node() = delete;//管提供了构造函数不会生成默认构造函数。这句代码的用处是明令禁止

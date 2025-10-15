@@ -4,6 +4,7 @@
 #include "Array.hpp"
 #include "SinglyLinkList.hpp"
 #include "SinglyCircularLinkList.hpp"
+#include "DoublyLinkList.hpp"
 
 using std::cout;
 using std::endl;
@@ -108,8 +109,22 @@ void singlyCircularLinkListTest()
     SCLL1.joseph(3);
 }
 
+void doublyLinkListTest()
+{
+    using namespace DoublyLinkListNameSpace;
+    DoublyLinkList<int> DLL1;
+    DLL1.push_back(8);
+    DLL1.push_front(10);
+    DLL1.push_front(114514);
+    DLL1.show_list();
+    cout << DLL1.search(114514) << endl;
+    cout << DLL1.delete_first(114514) << endl;
+    DLL1.show_list();
+
+}
+
 int main()
 {
-    singlyCircularLinkListTest();
+    doublyLinkListTest();
     return 0;
 }

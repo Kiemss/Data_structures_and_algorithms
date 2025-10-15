@@ -8,7 +8,9 @@ struct Node
 {
     Node<ElementType>* next_ {};
     ElementType value_ {};
-    Node(ElementType value = ElementType()) : value_(value) , next_(nullptr)
+    Node(ElementType value = ElementType()) 
+    : value_(value) 
+    , next_(nullptr)
     {}
 };
 
