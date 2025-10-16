@@ -8,6 +8,7 @@
 #include "DoublyCircularLinkList.hpp"
 #include "SeqStack.hpp"
 #include "LinkStack.hpp"
+#include "StackProblem.h"
 using std::cout;
 using std::endl;
 
@@ -180,8 +181,17 @@ void linkStackTest()
     cout << "栈顶元素是：" << SS1.top() << endl;
 }
 
+void reverseToPolishTest()
+{
+    std::vector<std::string>  tokens = {"(" , "3" ,  "+", "2", ")", "*", "(", "4", "-", "1", ")" };
+    for(const std::string& cur : reverse_to_polish(tokens))
+    {
+        cout << cur << " ";
+    }
+}
+
 int main()
 {
-    linkStackTest();
+    reverseToPolishTest();
     return 0;
 }

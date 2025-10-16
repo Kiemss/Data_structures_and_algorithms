@@ -106,3 +106,4 @@ namespace LinkStackNameSpace
         return (this->m_pTop)->value_;
     }
 }
+
