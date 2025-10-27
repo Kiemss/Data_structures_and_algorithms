@@ -9,6 +9,8 @@
 #include "SeqStack.hpp"
 #include "LinkStack.hpp"
 #include "StackProblem.h"
+#include "SeqQueue.hpp"
+#include "LinkQueue.hpp"
 using std::cout;
 using std::endl;
 
@@ -190,8 +192,34 @@ void reverseToPolishTest()
     }
 }
 
+void seqQueueTest()
+{
+    using namespace SeqQueueNameSpace;
+    SeqQueue<int> sq1;
+    cout << sq1.empty() << endl;
+    sq1.push(114514);
+    sq1.push(1919180);
+    cout << sq1.front() << " " << sq1.rear() << " " << sq1.empty() << " " << sq1.size() << endl;
+    sq1.pop();
+    cout  << " " << sq1.front()  <<  " " << sq1.rear() << " " <<  sq1.size() << endl;
+}
+
+void linkQueueTest()
+{
+    using namespace LinkQueueNameSpace;
+    LinkQueue<int> lq1;
+    cout << lq1.empty() << endl;
+    lq1.push(114514);
+    lq1.push(1919180);
+    cout << lq1.front() << " " << lq1.rear() << " " << lq1.size() << endl;
+    lq1.pop();
+    cout << lq1.front() << " " << lq1.rear() << " " << lq1.size() << endl;
+}
+
+#if 0
 int main()
 {
-    reverseToPolishTest();
+    linkQueueTest();
     return 0;
 }
+#endif

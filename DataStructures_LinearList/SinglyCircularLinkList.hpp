@@ -154,7 +154,7 @@ void SinglyCircularLinkList<ElementType>::show_list() const
     std::cout << std::endl;
 }
 
-//约瑟夫问题
+//约瑟夫问题（报数问题）
 //⭐尾节点和跳过头节点数数是重难点!!!
 template<typename ElementType>
 void SinglyCircularLinkList<ElementType>::joseph(size_t num)
