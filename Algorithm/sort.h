@@ -246,3 +246,45 @@ void merge(int arr[],int left,int mid,int right)
 
     return;
 }
+
+//堆排序
+void sift_down(int arr[],int index, int size)
+{
+    int val = arr[index];//先记录要调整的元素
+    while(index * 2 + 1 < size)//有左孩子就继续
+    //如果使用 index < (size - 1)/2 就是表示到最后一个父节点就结束
+    {
+        int child = index * 2 + 1;//默认为左子节点
+        if(child + 1 < size && arr[child] < arr[child + 1])
+        {
+            ++child;
+        }
+        if(arr[child] > val)//子节点比父节点大，父节点下沉
+        {
+            arr[index] = arr[child];
+            index = child;  
+        }
+        else
+        {
+            break;
+        }
+    }
+    arr[index] = val;
+}
+
+void heap_sort(int arr[],int size)
+{
+    for(int i = (size - 1)/2;i >= 0;--i)//从最大的父节点开始
+    {
+        sift_down(arr,i,size);//单次调用是让单个节点上浮到合适位置
+        //for循环调用就是构建大根堆
+    }
+
+    //把堆顶元素和末尾元素进行交换，从堆顶开始下沉操作
+    for(int i = size - 1;i > 0;--i)
+    {
+        std::swap(arr[0],arr[i]);//交换堆顶和堆尾
+
+        sift_down(arr,0,i);//将被交换到堆顶的元素重新下沉到合适的位置
+    }
+}

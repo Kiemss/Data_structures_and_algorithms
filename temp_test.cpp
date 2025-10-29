@@ -1,36 +1,20 @@
-#include<vector>
-#include<iostream>
+#include <functional>
+#include <iostream>
+#include <typeinfo>
 
-using std::cout;
-using std::endl;
-
-class Solution {
-public:
-    bool isPalindrome(int x) 
+void demonstrate_type_erasure() 
+{
+    int times{};
+    std::function func = [times](int a = {},int b = {})
     {
-        if(x < 0) return false;
-        std::vector<int> nums = {};
-        while(x > 0)
-        {
-            nums.push_back(x%10);
-            x /= 10;
-        }
-        auto lit = nums.begin();
-        auto rit = nums.end() - 1;
-        while(lit < rit)
-        {
-            if(*lit != *rit) return false;
-            ++lit;
-            --rit;
-        }
-        return true;
-    }
-};
+        std::cout << a*b << std::endl;
+    };
+    for(int i = 0;i< 10;++i){func(i,i);}
+}
 
-#if 0
+#if  0
 int main()
 {
-    Solution sol;
-    cout << sol.isPalindrome(121);
+    demonstrate_type_erasure();
 }
 #endif
