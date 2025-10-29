@@ -21,7 +21,7 @@ int main()
     cout << endl;
     //下面是算法
 
-    quick_sort(arr,0,9);    
+    merge_sort(arr,0,9);    
 
     for(int i = 0;i < SIZE;++i)
     {

@@ -184,3 +184,65 @@ void quick_sort(int arr[],int begin,int end)
     quick_sort(arr,mid + 1,end);
     quick_sort(arr,begin,mid - 1);
 }
+
+//归并排序
+void merge(int arr[],int left,int mid,int right);
+//归并排序接口
+void merge_sort(int arr[],int begin,int end)
+{
+    //递归结束条件
+    if(begin >= end)
+    {
+        return;
+    }
+
+    //先递
+    int mid = (begin + end)/2;
+    merge_sort(arr,begin,mid);
+    merge_sort(arr,mid + 1,end);
+
+    //⭐再归并(理解归并排序代码启用的关键！)
+    merge(arr,begin,mid,end);
+}
+
+//归并排序
+void merge(int arr[],int left,int mid,int right)
+{
+    int* new_arr = new int[right - left + 1];//申请合并后的数组内存空间
+    int arr_index = 0;
+    //排序
+    int i = left;
+    int j = mid + 1;
+    while(i <= mid && j <= right)//注意等号，边界条件！
+    {   
+        if(arr[i] <= arr[j])//等号情况也判，保持稳定性
+        {
+            new_arr[arr_index++] = arr[i++]; 
+        }
+        else 
+        {
+            new_arr[arr_index++] = arr[j++];
+        }
+    }
+
+    //使用while而不是if处理剩余元素（虽然逻辑上不会剩下多余一个的元素）
+    while(i <= mid)
+    {
+        new_arr[arr_index++] = arr[i++];
+    }
+    while(j <= right)
+    {
+        new_arr[arr_index++] = arr[j++];
+    }
+
+    //将已排序数据拷贝进原数组
+    for(i = 0, j = left;j <= right;++i,++j)
+    {
+        arr[j] = new_arr[i];
+    }
+
+    //记得delete
+    delete[] new_arr;
+
+    return;
+}
