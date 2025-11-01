@@ -1,6 +1,8 @@
 #pragma once
 #include<iostream>
 #include<algorithm>
+#include<string>
+#include<vector>
 
 //冒泡排序
 void bubble_sort(int arr[],int size)
@@ -286,5 +288,44 @@ void heap_sort(int arr[],int size)
         std::swap(arr[0],arr[i]);//交换堆顶和堆尾
 
         sift_down(arr,0,i);//将被交换到堆顶的元素重新下沉到合适的位置
+    }
+}
+
+//基数排序
+void radix_sort(int arr[],int size)
+{
+    if(size <= 0) throw std::underflow_error("array is empty!");
+    int max = arr[0];
+    for(int i = 1;i < size;++i)
+    {
+        if(arr[i] > max) max = arr[i];//找到数组中元素最大值 
+    }
+    int len = std::to_string(max).size();//获取最大位数
+
+    std::vector<std::vector<int>> vecs(10);//二维数组当“桶”,必须先初始化，否则无法直接下标访问
+
+    int dev = 1;
+    for(int i = 0;i < len;++i,dev *= 10)//最外层循环：从个位到最高位
+    {
+        vecs.resize(10);//清空后需要resize(10),相当于创建10个桶，否则无法访问下标
+        //如果想不重新创建，就需要单独清空每个小桶而不是整个大桶
+        int index {};
+        for(int j = 0;j < size;++j)//遍历数组
+        {
+            index = (arr[j] /dev) % 10;//得到相应位的数字
+            vecs[index].push_back(arr[j]);//将该数填进相应的桶中
+        }
+
+        //将桶中元素再次放回数组中
+        int idx = 0;
+        for(auto& vec : vecs)
+        {
+            for(int v : vec)
+            {
+                arr[idx++] = v;
+            }
+        }
+
+        vecs.clear();//记得清空vecs，这种相当于清空大桶      
     }
 }

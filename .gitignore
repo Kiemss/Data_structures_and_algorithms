@@ -2,3 +2,7 @@
 .vscode/
 *.json
 *.exe
+
+#忽略调试用文件
+temp_test.cpp
+test.cpp
