@@ -1,7 +1,7 @@
 #include<iostream>
 #include<vector>
 
-namespace data_structrues::hash_table
+namespace data_structrues::linear_hash_table
 {
     //桶的状态
     enum class State
@@ -35,8 +35,8 @@ namespace data_structrues::hash_table
         int m_cap;//哈希表容量
         double m_load_factor;//哈希表装载因子
 
-        static const int PRIME_SIZE = 10; //素数表的大小(整形)
-        static int m_prime_table[PRIME_SIZE];//素数表
+        static constexpr int PRIME_SIZE = 10; //素数表的大小(整形)
+        static constexpr int m_prime_table[PRIME_SIZE]  = {3, 7, 23, 47, 97, 251, 443, 911, 1471, 42773};//素数表
         int m_prime_index; //当前使用的素数下标
 
         //哈希表扩容
@@ -188,6 +188,7 @@ namespace data_structrues::hash_table
         }
     };
 
-    int LinearProbingHashTable::m_prime_table[PRIME_SIZE] = {3, 7, 23, 47, 97, 251, 443, 911, 1471, 42773};
+    
+
 }
 

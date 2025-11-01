@@ -2,7 +2,7 @@
 #include"binary_search.h"
 #include"sort.h"
 #include "heap.h"
-#include "hash_table.h"
+#include "linear_hash_table.h"
 
 #include<time.h>
 #include<stdlib.h>
@@ -33,7 +33,7 @@ int* get_random_arr
 int main()
 {
     using namespace data_structures::priority_queue;
-    using namespace data_structrues::hash_table;
+    using namespace data_structrues::linear_hash_table;
 
     const int SIZE = 10;
     const int RANGE = 100;
