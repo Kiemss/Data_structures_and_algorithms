@@ -2,7 +2,7 @@
 #include<iostream>
 #include<vector>
 
-namespace data_structrues::linear_hash_table
+namespace data_structures::linear_hash_table
 {
     //桶的状态
     enum class State

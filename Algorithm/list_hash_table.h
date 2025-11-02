@@ -1,8 +1,9 @@
 #pragma once
 #include<iostream>
+#include<vector>
+#include<list>
 
-
-namespace data_structures::list_hash_map
+namespace data_structures::my_list_hash_table
 {
     //节点结构，用于生成链表
     struct Node
@@ -90,7 +91,7 @@ namespace data_structures::list_hash_map
 
             //创建一个装载Node节点的数组,⭐记得初始化数组
             this->m_table = new Node*[m_cap] ;
-            
+
             for (int i = 0;i < this->m_cap;++i)
             {
                 m_table[i] = new Node();
@@ -123,19 +124,11 @@ namespace data_structures::list_hash_map
         void insert(int key)
         {
             //先判断是否需扩容
-            int table_size {};
-            for (int i = 0;i < m_cap;++i)
-            {
-                //非空就计数
-                if (m_table[i]->next_) ++table_size;
-            }
             //index为key模运算后要插入的位置下标
             int index = key % this->m_cap;
 
-            if (!m_table[index]) ++table_size;//如果插入前为空，由于计算的是插入后的，也要++
-
             //判断是否需要expand
-            if ((table_size) * 1.0 / this->m_cap > this->m_load_factor) expand();
+            if ((this->m_size + 1) * 1.0 / this->m_cap > this->m_load_factor) expand();
 
             Node* new_node = new Node(key);//新建节点
             //⭐直接使用头插法即可，自己写代码用了尾插，笨比完了
@@ -166,7 +159,7 @@ namespace data_structures::list_hash_map
             }
             return false;
         }   
-    
+        
         //查询
         bool find(int key)
         {
@@ -187,4 +180,33 @@ namespace data_structures::list_hash_map
         }   
 
     };
+}
+
+namespace data_structures::list_hash_table
+{
+    using namespace std;
+    class SeparateChainingHashTable;//前置声明
+    using HT = SeparateChainingHashTable;
+    class SeparateChainingHashTable//链式哈希表
+    {
+    private:
+        vector<list<int>> table_;//哈希表的数据结构
+        int useBucketNum_; //记录桶的个数
+        double loadFactor_; //记录哈希表装载因子
+
+        static constexpr int PRIME_SIZE = 10;//素数表大小
+        static constexpr int m_prime_table[PRIME_SIZE]  
+        = {3, 7, 23, 47, 97, 251, 443, 911, 1471, 42773};//素数表
+        int primeIdx_;//当前使用的素数下标
+
+    public:
+        //构造函数
+        SeparateChainingHashTable(int size = HT::m_prime_table[0],double loadFactor = 0.75)
+        : useBucketNum_(0)
+        ,loadFactor_(loadFactor)
+        , primeIdx_(0)
+        {}
+    };
+
+
 }
