@@ -1,3 +1,4 @@
+#pragma once
 #include<iostream>
 
 
@@ -86,8 +87,10 @@ namespace data_structures::list_hash_map
                 ++m_prime_index;
             }
             m_cap = HT::m_prime_table[m_prime_index];
+
             //创建一个装载Node节点的数组,⭐记得初始化数组
             this->m_table = new Node*[m_cap] ;
+            
             for (int i = 0;i < this->m_cap;++i)
             {
                 m_table[i] = new Node();
@@ -120,10 +123,20 @@ namespace data_structures::list_hash_map
         void insert(int key)
         {
             //先判断是否需扩容
-            if ((this->m_size + 1) * 1.0 / this->m_cap > this->m_load_factor) expand();
-
+            int table_size {};
+            for (int i = 0;i < m_cap;++i)
+            {
+                //非空就计数
+                if (m_table[i]->next_) ++table_size;
+            }
             //index为key模运算后要插入的位置下标
             int index = key % this->m_cap;
+
+            if (!m_table[index]) ++table_size;//如果插入前为空，由于计算的是插入后的，也要++
+
+            //判断是否需要expand
+            if ((table_size) * 1.0 / this->m_cap > this->m_load_factor) expand();
+
             Node* new_node = new Node(key);//新建节点
             //⭐直接使用头插法即可，自己写代码用了尾插，笨比完了
             new_node->next_ =  this->m_table[index]->next_;

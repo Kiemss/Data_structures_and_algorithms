@@ -2,6 +2,7 @@
 #include"binary_search.h"
 #include"sort.h"
 #include "heap.h"
+#include "list_hash_map.h"
 #include "linear_hash_table.h"
 
 #include<time.h>
@@ -32,26 +33,25 @@ int* get_random_arr
 #if 1
 int main()
 {
-    using namespace data_structures::priority_queue;
-    using namespace data_structrues::linear_hash_table;
+    using namespace data_structures::list_hash_map;
 
     const int SIZE = 10;
     const int RANGE = 100;
     int* arr = get_random_arr(SIZE,RANGE);
 
-    HT ht;;
-   ht.insert(3);
-   ht.insert(10);
-   ht.insert(17);
-   cout << ht.find(11);
-   cout << ht.erase(10);
-   cout << ht.find(17);
-   ht.insert(66);
-   ht.find(66);
+    HT ht;
+    ht.insert(3);
+    ht.insert(10);
+    ht.insert(17);
+    cout << ht.find(11);
+    cout << ht.erase(10);
+    cout << ht.find(17);
+    ht.insert(66);
+    ht.find(66);
     for(int i = 0;i < SIZE;++i)
     {
         ht.insert(arr[i]);
-        cout << ht.get_load_factor() << endl;
+       //cout << ht.get_load_factor() << endl;
     }
 }
 #endif
