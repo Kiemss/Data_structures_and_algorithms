@@ -126,3 +126,6 @@ void bit_map_duplicate_finder(vector<int> vec,int size)
         }
     }
 }
+
+//布隆过滤器
+class BloomFilter{};
