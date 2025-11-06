@@ -30,23 +30,8 @@ namespace data_structures::binary_search_tree
         size_t m_size;//当前节点数
         Compare m_compare;//需要定义函数对象才能进行调用
 
-        //前序遍历
-        /*⭐自己写的，总结：如果需要用成员变量给成员函数赋值，说明该用另一个函数封装该函数了
-        void preorder_traversal(std::vector<ElementType>& vec,Node* ptr = nullptr)
-        {
-            if (ptr == nullptr) ptr = this->m_pRoot;
-            vec.push_back(ptr->data_);
-            if (ptr->left_child_ != nullptr)
-            {
-                preorder_traversal(vec,ptr->left_child_);
-            }
-
-            if (ptr->right_child_ != nullptr)
-            {
-                preorder_traversal(vec,ptr->right_child_);
-            }
-        }
-        */
+        
+        //前序遍历⭐总结：如果需要用成员变量给成员函数赋值，说明该用另一个函数封装该函数了
         void preorder_traversal(Node* ptr,std::vector<ElementType>& vec)
         {
             if (ptr != nullptr)
