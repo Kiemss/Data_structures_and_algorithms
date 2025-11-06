@@ -2,6 +2,7 @@
 #include<iostream>
 #include<functional>
 #include<queue>
+#include<cmath>
 #include<limits>
 #include<stack>//用于迭代遍历树
 //#include<memory>沟槽的智能指针，太费时间了
@@ -269,11 +270,95 @@ namespace data_structures::binary_search_tree
             }
         }
         
-        public:
-        //构造函数
-        BinarySearchTree() : m_pRoot(nullptr) , m_size(0){}
+        //镜像翻转内部函数
+        void mirror_impl(Node* node)
+        {   
+            if (node == nullptr) {return;}
+            Node* temp = node->left_child_;
+            node->left_child_ = node->right_child_;
+            node->right_child_ = temp;
+            mirror_impl(node->left_child_);
+            mirror_impl(node->right_child_);
+        }
+        
+        //判断对称内部函数
+        bool is_mirror_impl(const Node* left,const Node* right)
+        {
+            if (left == nullptr && right == nullptr) {return true;}
+            if (left == nullptr || right == nullptr) {return false;}
+            if (left->data_ != right->data_) {return false;}
+            return is_mirror_impl(left->right_child_,right->left_child_) && is_mirror_impl(left->left_child_,right->right_child_);
+        }
 
-        //析构函数
+        //自己写的判断二叉树平衡函数
+        std::pair<bool,size_t> my_is_balance_impl(Node* node)
+        {
+            if (node == nullptr) 
+            {     
+                return {true,0};
+            }
+            auto rh =  my_is_balance_impl(node->right_child_ );
+            auto lh =  my_is_balance_impl(node->left_child_);
+            if (std::abs(static_cast<int>(rh.second) - static_cast<int>(lh.second)) > 1 || !rh.first || !lh.first) 
+            {return {false,rh.second > lh.second ? (rh.second + 1) : (lh.second + 1)};}
+            else {return {true,rh.second > lh.second ? (rh.second + 1) : (lh.second + 1)};}
+        }
+        
+        //判断平衡树内部接口
+        int is_balance_impl(Node* node,bool& flag,int deep)//注意传入的flag是引用
+        {
+            if (node == nullptr) {return deep;}//节点为空，返回当前深度
+
+            //每向下一层，深度+1
+            int lh = is_balance_impl(node->left_child_, flag, deep + 1);
+            //if (!flag) {return lh;}
+            //被注释掉的是错误的优化方案：如果左右子树同时失衡并且右子树深度更深，会返回错误的深度；如果仅仅是想快速获得返回值而不需要正确深度则是可以的
+            int rh = is_balance_impl(node->right_child_, flag, deep + 1);
+            //if (!flag) {return rh;}
+
+            //如果深度相差超过2，则说明该树不平衡
+            if (std::abs(lh - rh) > 1) {flag = false;}
+
+            return std::max(lh,rh);//每次返回左右子树的最大值，也就是回去的是正确深度
+        }
+    
+        
+        //未优化判断平衡树函数
+        bool native_is_balance_impl(Node* node)
+        {
+            if (node == nullptr) {return true;}
+            //前序遍历：V
+            int lh = high(node->left_child_);
+            int rh = high(node->right_child_);
+
+            if (std::abs(lh - rh) > 1) {return false;}
+
+            //L
+            if (! native_is_balance_impl(node->left_child_)) {return false;}
+            //R
+            return native_is_balance_impl(node->right_child_);
+        }
+
+    public:
+        //构造函数
+        BinarySearchTree(const Compare& comp  = Compare()) : m_pRoot(nullptr) , m_size(0), m_compare(comp){}
+
+        //析构函数->使用层序遍历可以防止栈溢出（我自己想的是用递归前序遍历实现）
+        ~BinarySearchTree()
+        {
+            if (this->m_pRoot == nullptr) {return;}
+            std::stack<Node*> st;
+            st.push(this->m_pRoot);
+            Node* cur;
+            while (!st.empty())
+            {
+                cur = st.top();
+                st.pop();
+                if (cur->left_child_ != nullptr) {st.push(cur->left_child_);}
+                if (cur->right_child_ != nullptr){st.push(cur->right_child_);}
+                delete cur;
+            }
+        }
 
         //获取节点数
         size_t size() const
@@ -696,7 +781,7 @@ namespace data_structures::binary_search_tree
             return this->m_pRoot;
         }
 
-        //判断某个二叉树是不是该二叉树的子树
+        //判断某个二叉树是不是该二叉树的子树问题
         bool is_child_tree(BinarySearchTree<ElementType, Compare> &child)
         {
             //如果该树为空，则该数是任何数的子树
@@ -729,6 +814,94 @@ namespace data_structures::binary_search_tree
             Node* node = get_LCA_impl(val1,val2,this->m_pRoot);
             if ( node == nullptr) {throw "no LCA!";}//如果没有公共祖先节点，抛异常
             else {return node->data_;}
+        }
+ 
+        //镜像翻转问题->使用前序遍历依次交换左右子节点
+        void mirror()
+        {
+            mirror_impl(this->m_pRoot);
+        }
+
+        //判断二叉树是否对称问题
+        bool is_mirror()
+        {
+            if (this->m_pRoot == nullptr) {return true;}
+            return is_mirror_impl(m_pRoot->left_child_,m_pRoot->right_child_);
+        }
+   
+        //根据前序遍历和中序遍历结果重建二叉树
+        void re_build(std::vector<ElementType>& pre_vec,std::vector<ElementType>& in_vec, int vec_size)
+        {
+            this->m_pRoot = re_build_impl(pre_vec,in_vec,0, vec_size, 0 ,vec_size);
+        }
+
+        //重建二叉树递归函数
+        Node* re_build_impl(std::vector<ElementType>& pre_vec,std::vector<ElementType>& in_vec,int pre_beg,int pre_end,int in_beg,int in_end)
+        {
+            if (in_beg > in_end || pre_beg > pre_end) {return nullptr;}
+
+            Node* new_node = new Node(pre_vec[pre_beg]);
+            int i = in_beg;
+            while (i <= in_end)
+            {
+                //找到中序遍历中该节点的位置
+                if (in_vec[i] == pre_vec[pre_beg])
+                {
+                    //中序遍历该节点位置之前的都是左子树，可以计算得到前序遍历最后一个左子树节点的坐标
+                    new_node->left_child_ = re_build_impl(pre_vec, in_vec, pre_beg + 1, pre_beg + (i - in_beg), in_beg, i - 1);
+                    //中序遍历该节点位置之后的都是右子树，可以计算得到前序遍历最右子树的区间
+                    new_node->right_child_ = re_build_impl(pre_vec, in_vec, pre_beg + (i - in_beg) + 1, pre_end, i + 1,in_end );
+                    break;
+                }
+                ++i;
+            }
+            return new_node;
+        }
+   
+        //未优化的判断平衡二叉树函数，缺点：重复的递归调用->前序遍历然后判断高度
+        bool native_is_balance()
+        {
+            if (this->m_pRoot == nullptr) {return true;}
+            return native_is_balance_impl(this->m_pRoot);
+        }
+
+
+        //自己写的判断二叉树平衡函数封装接口
+        bool my_is_balance()
+        {
+            return my_is_balance_impl(this->m_pRoot).first;
+        }
+
+        //判断二叉树是否平衡
+        bool is_balance()
+        {
+            if (this->m_pRoot == nullptr) {return true;}//空树必然平衡
+            bool flag = true;//这里使用了额外的变量flag用来在获取深度的“归”时判断树是否平衡。
+            is_balance_impl(this->m_pRoot,flag,0);
+            return flag;
+        }
+
+        //寻找中序遍历倒数第k个节点->就是RVL遍历正数第k个节点
+        const ElementType& get_lastK_inIOT(const size_t& k)
+        {
+            size_t pos = 0;//引用一定要传入引用✍✍✍
+            Node* node = GLK_inHOT_impl(this->m_pRoot,k,pos);
+            if (node == nullptr) {throw std::runtime_error("Not found!");}
+            return node->data_;
+        }   
+        
+        //寻找中序遍历倒数第k个节点内部函数
+        Node* GLK_inHOT_impl(Node* node,const size_t& k,size_t& pos)
+        {
+            if (node == nullptr) {return nullptr;}
+
+            Node* r_node = GLK_inHOT_impl(node->right_child_,k,pos);
+            if (r_node != nullptr){return r_node;}//关于三个return(其实就是先后访问RVL，有就返回该节点获取到的目标节点)
+
+            ++pos; //访问当前节点时++pos，而不是递归调用时传入(pos + 1)
+            if (pos == k) {return node;}
+
+            return GLK_inHOT_impl(node->left_child_,k,pos);
         }
     };
 }

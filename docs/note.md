@@ -57,8 +57,19 @@
 
 7. `const`成员函数内不能调用非`const`成员函数！
 
-
-
+8. ```c++
+   template<typename Compare = std::less<int>>
+   //Compare是一个函数类型，默认用less初始化（也就是如果没有传入Compare类型对象默认是less类型）
+   Class BST
+   {
+   private:
+       Compare m_compare;//Compare类型的对象m_compare
+   public:
+      BST(const Compare& comp = Compare()) : m_compare(comp){} 
+      //用Compare类型的默认参数less对comp进行默认构造
+   };
+   ```
+9. 
 ## 代码规范
 
 1. 现代cpp中，关于`private`、`public`、`protected`的缩进：应该与关键字`class`平齐。
