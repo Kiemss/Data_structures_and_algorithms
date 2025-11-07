@@ -1,8 +1,9 @@
 #include <functional>
 #include <iostream>
 #include <typeinfo>
-
-void demonstrate_type_erasure() 
+#include<string>
+#include<cstring>
+void demonstrate_type_erasure() //求最短路径的
 {
     int v = 3;
     int dist[3][3] {};
@@ -25,9 +26,19 @@ void demonstrate_type_erasure()
     }
 }
 
-#if  0
+#if  1
 int main()
 {
-    demonstrate_type_erasure();
+    int counter = 0;
+    char words[20];
+    const char finished[] = "done";
+    while (strcmp(finished,words) != 0) //3.判断
+    {
+        counter++;  //1.计数+1
+        std::cin >> words; //2.你输入
+        std::cin.get(); //
+
+    }
+    std::cout << counter - 1;
 }
 #endif
