@@ -69,7 +69,31 @@
       //用Compare类型的默认参数less对comp进行默认构造
    };
    ```
-9. 
+
+9. 递归：理清代码执行顺序
+
+   ```cpp
+   void recursive_func(){	
+       //“递”时会执行的代码
+   	recursive_func();//递归调用
+       //“归”时会执行的代码
+   }	
+   ```
+
+10. 递归：代码要连续（尤其指树中的递归），跳跃很容易导致逻辑混乱（比如node突然跳到其前驱上进行递归会导致前驱的父节点仍然指向原来的前驱节点而实际上应该指向node）
+
+11. 关于`const`的修饰原则：先与左边结合，否则与右边结合。不会一次性结合多个（比如不会同时修饰Node*）
+
+    * 实际上，解析时应该从变量开始向外解析
+
+    ```cpp
+    const int* ptr;//*->ptr是指针; int->ptr是int类型的指针;const我们提前修饰好int，说明指针ptr可以被修改，但是其指向的int不能被修改
+    int* const ptr;//const->ptr不能被修改; *->ptr是指针; int->ptr是int类型的指针
+    const Node* &ptr;//这是一个对Node*的引用；const只修改Node而不是Node*，也就是不能修改指针指向的对象
+    ```
+    
+    
+
 ## 代码规范
 
 1. 现代cpp中，关于`private`、`public`、`protected`的缩进：应该与关键字`class`平齐。

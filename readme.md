@@ -15,13 +15,16 @@
 
 
 ## 文档目录
-* [数据结构与算法笔记](docs/data_structures.md)
+* [线性表笔记](docs/linearList.md)
+* [查找与基础排序笔记](docs/search&sort.md)
+* [哈希表笔记](docs/hash_table.md)
+* [二叉树笔记](docs/binary_tree.md)
 * [编码规范笔记](docs/note.md)
 
 
 ## 源码目录
 
-* [线性表相关](linear_list/)
+* [线性表](linear_list/)
 * [排序算法和哈希表](algorithm/)
 * [大数据问题](big_data_processor/)
 * [二叉树](binary_tree/)

@@ -641,7 +641,7 @@ namespace data_structures::binary_search_tree
             #endif
         }
 
-        //迭代后序遍历函数
+        //迭代后序遍历函数->相当于VRL的逆序
         void iterative_postorder_traversal(std::vector<ElementType>& vec)
         {
             if (this->empty()) return;//树空：直接返回
