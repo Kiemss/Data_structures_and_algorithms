@@ -91,8 +91,14 @@
     int* const ptr;//const->ptr不能被修改; *->ptr是指针; int->ptr是int类型的指针
     const Node* &ptr;//这是一个对Node*的引用；const只修改Node而不是Node*，也就是不能修改指针指向的对象
     ```
-    
-    
+
+12. ```c++
+    get_parent(child) = get_parent(node); //lvalue requied as left operand of assignment
+    ```
+	* 函数的返回值是一个右值，你不能将右值赋值给右值，除非你返回的是一个引用`&`
+	* 可以如果返回值是一个指针左值，可以通过解引用`*`将其变成对象（是一个左值）
+	* 如果一定要通过函数返回值的方式将指针赋值给指针，那就得返回指针引用`*&`
+13. 
 
 ## 代码规范
 
