@@ -13,20 +13,23 @@
 * **十大排序算法**的笔记和源码
 * **哈希表**的笔记和源码
 * **大数据查重**问题和**topk**问题的部分解决方案源码（使用哈希表、位图、布隆过滤器等数据结构实现）
-* **二叉树**的笔记和源码(包括BST，AVL树和红黑树)
+* **二叉树**的笔记和源码(包括BST，AVL树和红黑树,)
+* **B树**的笔记
 
 
 ## 文档目录
-* [线性表笔记](docs/linearList.md)
+* [编码规范笔记](docs/note.md)
+* [线性表笔记](docs/linear_list.md)
 * [查找与基础排序笔记](docs/search&sort.md)
 * [哈希表笔记](docs/hash_table.md)
 * [二叉树笔记](docs/binary_tree.md)
-* [编码规范笔记](docs/note.md)
-
+* [B树笔记](docs/balance_tree.md)
+* [五大核心算法笔记](/docs/core_algorithm.md)
 
 ## 源码目录
 
 * [线性表](linear_list/)
-* [排序算法和哈希表](algorithm/)
+* [排序算法和哈希表](base_algorithm/)
 * [大数据问题](big_data_processor/)
 * [二叉树](binary_tree/)
+* [五大核心算法](core_algorithm/)
