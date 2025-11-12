@@ -1,6 +1,6 @@
 # 搜索
 
-## 二分搜索（Binary Search)
+## 二分搜索（Binary Search）
 
 ⭐二分搜索严格要求数据有序！
 

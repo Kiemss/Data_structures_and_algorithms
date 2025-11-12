@@ -24,7 +24,7 @@
 * [哈希表笔记](docs/hash_table.md)
 * [二叉树笔记](docs/binary_tree.md)
 * [B树笔记](docs/balance_tree.md)
-* [五大核心算法笔记](/docs/core_algorithm.md)
+* [经典算法笔记](/docs/classic_algorithm.md)
 
 ## 源码目录
 
@@ -32,4 +32,4 @@
 * [排序算法和哈希表](base_algorithm/)
 * [大数据问题](big_data_processor/)
 * [二叉树](binary_tree/)
-* [五大核心算法](core_algorithm/)
+* [经典算法](/classic_algorithm/)
