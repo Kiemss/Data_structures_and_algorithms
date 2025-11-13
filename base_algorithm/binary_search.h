@@ -1,7 +1,7 @@
 #pragma once
 #include<iostream>
 
-namespace binary_search_algorithm
+namespace algorithm::binary_search_algorithm
 {
     //迭代二分搜索
     int binary_search_iterative(int arr[],int size,int val)

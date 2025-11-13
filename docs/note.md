@@ -7,7 +7,9 @@
   头删	pop_front
   尾删	pop_back
 * 检查是否存在  contain
-  查找并返回迭代器  find
+  查找并返回迭代器（位置信息）  find
+  数据结构特定查找，返回简单信息 search
+  复杂检索，返回复杂结果集 query
 * 删除第一个指定元素  erase
   删除所有指定元素  remove
 * 遍历  display
@@ -105,8 +107,20 @@
 ## 代码规范
 
 1. 现代cpp中，关于`private`、`public`、`protected`的缩进：应该与关键字`class`平齐。
+
 2. 类内`public`、`protected`、`private`顺序为从左到右，方便用户查阅接口。
+
 3. 代码优化：把精力放在优化算法上。对于选择是否使用显示转换、写不写大括号这些细枝末节，坚持**可读性 > "优雅"**
+
 4. 对于成员变量，成对数据使用突出特点的`key`和`val`，单个数据使用中性的`data`
+
 5. 类内实现同一功能的函数，类内函数可以对比类外接口函数加上`impl`后缀或者前缀
+
 6. 函数参数注意是否要使用`const`、`&`修饰。`const`修饰能保证不修改该变量，常用于插入、判断等操作，`&`修饰能保证操作能影响外部变量或调用时不是拷贝产生冗余的拷贝构造函数、析构函数（起到优化作用）
+
+7. 关于`*`和`&`：指针、引用和变量名结合`int *ptr`更规范，而不是和类型结合`int* ptr`
+
+   > "The choice between `int* p;` and `int *p;` is not about right and wrong, but about style. I prefer `int *p;` because it emphasizes that the declarator syntax matches the expression syntax."
+   > — **Bjarne Stroustrup**, *The C++ Programming Language*
+
+8. 
