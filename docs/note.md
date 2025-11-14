@@ -97,12 +97,23 @@
 12. ```c++
     get_parent(child) = get_parent(node); //lvalue requied as left operand of assignment
     ```
-	* 函数的返回值是一个右值，你不能将右值赋值给右值，除非你返回的是一个引用`&`
-	* 可以如果返回值是一个指针左值，可以通过解引用`*`将其变成对象（是一个左值）
-	* 如果一定要通过函数返回值的方式将指针赋值给指针，那就得返回指针引用`*&`
-	
+    * 函数的返回值是一个右值，你不能将右值赋值给右值，除非你返回的是一个引用`&`
+    * 可以如果返回值是一个指针左值，可以通过解引用`*`将其变成对象（是一个左值）
+    * 如果一定要通过函数返回值的方式将指针赋值给指针，那就得返回指针引用`*&`
+
 13. 当有符号数和无符号数进行比较时，有符号数会被**隐式转换为无符号数**，而不是取绝对值！
      `str.size() < -1 //size()函数返回的就是一个size_t类型数，-1会被转化为无符号数的最大值`
+
+14. **各种初始化方式的对比**
+
+    | 初始化方式                | 效果                 | C++版本  |
+    | :------------------------ | :------------------- | :------- |
+    | `string head {};`         | 值初始化，空字符串   | C++11    |
+    | `string head = {};`       | 值初始化，空字符串   | C++11    |
+    | `string head;`            | 默认初始化，空字符串 | 所有版本 |
+    | `string head = string();` | 显式值初始化         | 所有版本 |
+    | `string head("");`        | 直接初始化           | 所有版本 |
+
 
 ## 代码规范
 
@@ -123,4 +134,8 @@
    > "The choice between `int* p;` and `int *p;` is not about right and wrong, but about style. I prefer `int *p;` because it emphasizes that the declarator syntax matches the expression syntax."
    > — **Bjarne Stroustrup**, *The C++ Programming Language*
 
-8. 
+8. 创建临时变量和调用函数
+   当同一个变量调用同一个函数超过一次时，就要考虑使用临时变量进行优化
+   这就像在循环外事先声明好变量以便在循环内反复调用一样重要！
+
+9. 对于**指针**初始化应该使用`nullptr`而不是`{}`

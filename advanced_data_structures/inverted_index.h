@@ -23,7 +23,7 @@ using std::ifstream;
 using std::istringstream;
 using std::transform;
 
-namespace data_structures::d
+namespace data_structures::inverted_index
 {
 
     //倒排项
