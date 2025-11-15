@@ -72,7 +72,12 @@ int dijkstra(vector<vector<unsigned int>> &graph,int start, int end)
 int dijkstra_better(vector<vector<unsigned int>> &graph,int start, int end)
 {
     const int N = graph.size(); //顶点数
-    vector<unsigned int> dis(N, 0); //最短距离集合S(solve)
+    /*
+    S:已经确认的到该节点的最短路径；U:暂定的到该节点的最短路径。
+    每次循环从U中找最小值移到S中
+    并且如果有通过新中转节点到达U中节点更短的路径，那就更新U
+    */
+    vector<unsigned int> dis(N, 0); 
     vector<bool> use(N,false); //标记哪些节点最短距离已经被确定了，逻辑上区分S和U(unsettled)\Q(question)
 
     //定义小根堆
@@ -163,3 +168,128 @@ void dijkstra_test(int start, int end , bool choose = true) //最后一个参数
     }
 }
 
+//佛洛依德朴素算法
+void floyd(vector<vector<unsigned int>> &graph)
+{
+    const int N = graph.size();
+    for (int k = 0; k < N; ++k)
+    {
+        for (int i = 0; i < N; ++i)
+        {
+            for (int j = 0; j < N; ++j)
+            {
+                graph[i][j] = min(graph[i][j], graph[i][k] + graph[k][j]);
+            }
+        }
+    }
+}
+
+//优化佛洛依德算法
+vector<vector<int>> floyd_better(vector<vector<unsigned int>> &graph)
+{
+    int N = graph.size();
+    //创建前驱矩阵
+    vector<vector<int>> pre(N, vector<int>(N, -1)); //多维vector的嵌套初始化
+    //前驱矩阵初始化
+    for (int i = 0; i < N; ++i)
+    {
+        for (int j = 0; j < N; ++j)
+        {
+            if (graph[i][j] != INF && i != j)
+            {
+                pre[i][j] = i;//如果i和j直接相连且不是自身节点，那么从i到j的路径中前驱为i
+            }
+        }
+    }
+    
+    for (int k = 0; k < N; ++k) //⭐插入节点下标必须在最外层。这才符合每次往所有路径中插入一个顶点
+    {
+        for (int i = 0; i < N; ++i) //起点下标
+        {
+            if (graph[i][k] == INF) {continue;} //优化：无路径就必定不会比原路径短
+            for (int j = 0; j < N; ++j) //终点下标
+            {
+                if (graph[k][j] == INF) {continue;} //同样是优化
+                //如果插入新节点会使两点之间距离变短，那就插入并改变两点之间最短距离
+                if (graph[i][k] + graph[k][j] < graph[i][j])
+                {
+                    graph[i][j] = graph[i][k] + graph[k][j];
+                    //并更新前驱，注意不是=pre[i][k]
+                    pre[i][j] = pre[k][j]; //⭐解析：路径从i到j的前驱节点是从k到j的前驱节点，因为回溯是从j往前回溯的
+                }
+            }
+        }
+    }
+    return pre; //最后返回前驱矩阵
+}
+
+//路径回溯函数
+void reconstruct_path(vector<vector<int>> &path)
+{
+    const int N = path.size();
+    for (int i = 0;i < N; ++i)
+    {
+        for (int j = 0; j < N; ++j)
+        {
+            //跳过自身和不可到达的情况
+            if (i ==j || path[i][j] == -1) {continue;}
+            stack<int> st;
+            int cur = j;
+            //从终点反追踪到起点
+            while (cur != i)
+            {
+                st.push(cur);
+                cur = path[i][cur];
+            }
+
+            //输出路径
+            cout << i << "->";
+            while (!st.empty())
+            {
+                cout << st.top();
+                st.pop();
+                if (!st.empty()){cout << "->";}
+            }
+            cout << endl;
+        }
+        cout << "---" << endl;
+    }
+}
+
+//优化佛洛依德算法测试函数
+void floyd_test()
+{
+    vector<vector<unsigned int>> graph = 
+    {
+        {0, 6, 3, INF, INF, INF},
+        {6, 0, 2, 5, INF, INF},
+        {3, 2, 0, 3, 4, INF},
+        {INF, 5, 3, 0, 2, 3},
+        {INF, INF, 4, 2, 0, 5},
+        {INF, INF, INF, 3, 5, 0},
+    };
+
+    vector<vector<int>> path =  floyd_better(graph);
+
+    for (auto line : graph)
+    {
+        for (auto dis : line)
+        {
+            cout << dis << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+
+    for (auto line : path)
+    {
+        for (auto dis : line)
+        {
+            cout << dis << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+
+    reconstruct_path(path);
+}
