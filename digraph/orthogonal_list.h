@@ -5,20 +5,23 @@
 #include<fstream>
 #include<sstream>
 #include<stack>
-
+#include<queue>
+#include<limits>
 using  namespace std;
 
+
+
 //十字链表实现有向图
-class MyDirectedGraph
+class DirectedGraph
 {
 public:
     //构造函数
-    MyDirectedGraph()
+    DirectedGraph()
     {
         vertices.emplace_back(new VexNode("0"));
     }
     //析构函数
-    ~MyDirectedGraph()
+    ~DirectedGraph()
     {}
 
     //根据配置文件生成十字链表
@@ -128,22 +131,22 @@ public:
         }
     }
 
-    //深度优先遍历递归外部函数⭐该函数无法处理单独的顶点！
+    //深度优先遍历递归外部函数
     void recursive_depth_first_search()
     {
         //先重置所有节点
         remark();
-        int have_search = 0;
-        int index = 1;
-        while (have_search < vertices.size() - 1 && index < vertices.size())
+        for (int i = 1; i < vertices.size(); ++i)
         {
-            recursive_DFS_impl(vertices[index],have_search);
-            ++index;
+            if (vertices[i]->mark_ == false)
+            {
+            recursive_DFS_impl(vertices[i]);
+            }
         }
         cout << endl;
     }
 
-    /*糟糕的迭代dfs代码
+    /*糟糕的迭代dfs代码⭐对于图的遍历，最外层要用for循环遍历每一个顶点，以遍历可能出现的单独顶点
     void iterative_depth_first_search()
     {
         remark();
@@ -264,6 +267,101 @@ public:
         cout << endl;
     }
 
+    //广度优先遍历递归外部函数
+    void recursive_breadth_first_search()
+    {
+        remark();
+        queue<VexNode*> que;
+        for (int i = 1; i < vertices.size(); ++i)
+        {
+            if (vertices[i]->mark_ == false)
+            {
+                que.push(vertices[i]);
+                recursive_BFS_impl(que); //队列不为空时再调用迭代函数，防止不必要的调用
+            }
+        }
+        cout << endl;
+    }
+
+    //广度优先遍历迭代函数
+    void iterative_breadth_first_search()
+    {
+        remark();
+        queue<VexNode*> que;
+        for (int i = 1; i < vertices.size(); ++i)
+        {
+            if (vertices[i]->mark_ == false)
+            {
+                que.push(vertices[i]);
+                while (!que.empty())
+                {
+                    //从队列中取出队头元素
+                    VexNode* vex = que.front();
+                    que.pop();
+                    if (vex->mark_ == false)
+                    {
+                        cout << vex->data_ << " ";
+                        vex->mark_ = true;
+                        ArcNode* cur = vex->first_out_;
+                        while (cur != nullptr)
+                        {
+                            que.push(vertices[this->find(cur->head_vex_)]);
+                            cur = cur->tail_link_;
+                        }
+                    }
+                }
+            }
+        }
+        cout << endl;
+    }
+
+    //求不带权值的最短路径问题->广度优先遍历的应用
+    void short_path(int start, int end)
+    {
+        vector<int> vec(vertices.size(), 0); //使用vector要初始化容量和默认值!
+        queue<VexNode*> que;
+        que.push(vertices[start]);
+        while (!que.empty())
+        {
+            VexNode *vex = que.front();
+            que.pop();
+            if (vex->mark_ == false)
+            {
+                vex->mark_ = true;
+                ArcNode *cur = vex->first_out_;
+                while (cur != nullptr)
+                {
+                    int index = this->find(cur->head_vex_); //终点顶点的下标
+                    if (vec[index] == 0)//只记录第一次访问的路径！
+                    {
+                        vec[index] = this->find(vex->data_); //vec中，终点顶点记录了起点顶点的下标
+                    }
+                    
+                    if (index == end) //终点顶点的下标和目标顶点的下标相同：直接结算
+                    {
+                        stack<string> path;//用于逆序
+                        while (index > 0) //index == 0时已经将起点压入栈了
+                        {
+                            path.push(vertices[index]->data_);//将当前data压入栈
+                            index = vec[index];//复用一下index；让index跳到起点下标
+                        }
+                        while (!path.empty())
+                        {
+                            cout << path.top() << " ";
+                            path.pop();
+                        }
+                        cout << endl;
+                        return;
+                    }
+                    que.push(vertices[index]);
+                    cur = cur->tail_link_;
+                }
+            }
+        }
+        //遍历结束没找到目标顶点：说明没有该路径
+        cout << "no path!" << endl;
+    }
+
 private:
     //边节点
     struct ArcNode
@@ -275,8 +373,8 @@ private:
         , head_link_(head_link)
         {}
         string tail_vex_; //边的起点
-        string head_vex_; //边的终点
-        ArcNode *tail_link_; //同一个起点的下一条出边
+        string head_vex_; //⭐边的终点
+        ArcNode *tail_link_; //⭐同一个起点的下一条出边
         ArcNode *head_link_; //同一个终点的下一条入边
         
     };
@@ -295,11 +393,12 @@ private:
         ArcNode *first_out_; //出边的首指针   
         bool mark_; //标记，方便进行遍历 
     };
-
-    vector<VexNode*> vertices; //顶点数组
+    
+    //顶点数组
+    vector<VexNode*> vertices;
 
     //深度优先遍历递归算法
-    void recursive_DFS_impl(VexNode *vex, int &have_search)
+    void recursive_DFS_impl(VexNode *vex)
     {
         
         if (vex->mark_ == true)
@@ -308,16 +407,36 @@ private:
         }
 
         vex->mark_ = true; //遍历：标记该节点，防止被多次遍历
-        ++have_search;//同时说明该节点已被遍历
         cout << vex->data_ << " ";
 
         ArcNode *cur = vex->first_out_; //当前被遍历节点
         while (cur != nullptr)
         {
-            recursive_DFS_impl(vertices[this->find(cur->head_vex_)], have_search); //深度优先
+            recursive_DFS_impl(vertices[this->find(cur->head_vex_)]); //深度优先
             cur = cur->tail_link_;//下一个边
         }
         return;
+    }
+
+    //广度优先遍历递归算法
+    void recursive_BFS_impl(queue<VexNode*> &que)
+    {
+        if (que.empty() ) {return;}
+        VexNode *vex = que.front(); //取出队头节点并打印
+        que.pop();
+        if (vex->mark_ == false)
+        {
+            cout << vex->data_ << " ";
+            vex->mark_ = true;
+            
+            ArcNode *cur = vex->first_out_;
+            while (cur != nullptr)
+            {
+                que.push(vertices[find(cur->head_vex_)]);
+                cur = cur->tail_link_;
+            }
+        }
+        recursive_BFS_impl(que);
     }
 
     //重置节点状态函数
