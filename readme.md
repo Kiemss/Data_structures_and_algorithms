@@ -19,8 +19,8 @@
 * **大数据查重**问题和**topk**问题的部分解决方案源码（使用哈希表、位图、布隆过滤器等数据结构实现）
 * **二叉树**的笔记和源码(包括BST，AVL树和红黑树,)
 * **B树**的笔记
-* **字典树、跳表、倒排索引**的笔记
-
+* **字典树、跳表、倒排索引、并查集**的笔记
+* **回溯算法等经典算法**的笔记
 
 ## 文档目录
 * [编码规范笔记](docs/note.md)
@@ -31,13 +31,15 @@
 * [B树笔记](docs/balance_tree.md)
 * [经典算法笔记](/docs/classic_algorithm.md)
 * [字典树、跳表、倒排索引笔记](/docs/advanced_data_structures.md)
-* []
+* [并查集等其他基础数据结构](/docs/other_base_algorithm)
+* [图](/docs/graph.md)
 
 ## 源码目录
 
 * [线性表](linear_list/)
-* [排序算法和哈希表](base_algorithm/)
+* [排序算法和堆、哈希表、并查集](base_algorithm/)
 * [大数据问题](big_data_processor/)
 * [二叉树](binary_tree/)
 * [经典算法](/classic_algorithm/)
 * [字典树、跳表、倒排索引笔记](/advanced_data_structures/)
+* [图](/digraph/)
