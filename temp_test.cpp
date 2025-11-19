@@ -1,44 +1,71 @@
-#include <functional>
-#include <iostream>
-#include <typeinfo>
-#include<string>
-#include<cstring>
-void demonstrate_type_erasure() //求最短路径的
-{
-    int v = 3;
-    int dist[3][3] {};
-    int path[3][3] {-1};
-
-    for(int k = 0;k < v;++k)
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) 
     {
-        for (int i = 0;i < v;++i)
+        int sum_num = nums1.size() + nums2.size(); //获得总数
+        bool is_odd = (sum_num % 2 == 1); //总数是奇数
+        if (nums1.front() > nums2.back())  //nums1最小的比nums2最大的大
         {
-            for (int j = 0; j < v;++j)
+            if (sum_num/2 > nums2.size()) //在nums1里
             {
-                if (dist[i][k] + dist[k][j] < dist[i][j])
+
+            }
+            
+        }
+        else if (nums2.front() > nums2.back())
+        {
+
+        }
+        else //存在k，k前比nums2小，后面比nums2大
+        {
+            size_t j = 0;
+            size_t k = bs(nums1, nums2[j]); //获得的k是比nums2首个元素小或者相等的元素下标
+
+            //奇数：k + j + 2不包括中位数；偶数：k + j + 2刚好是一半
+            while (k + j + 2 < sum_num/2)
+            {
+                if (j < nums2.size() - 1)
+                { 
+                    ++j;
+                }
+                if (k < nums1.size() - 1)
                 {
-                    dist[i][j] = dist[i][k] + dist[k][j];
-                    //i到j的路径的最后一段复用k到j的路径的最后一段，因为此时k作为被插入的节点
-                    path[i][j] = path[k][j];
+                    while (nums1[k] <= nums2[j] &&  (k + j + 2 < sum_num/2))
+                    {
+                        ++k;
+                    }
                 }
             }
+
+            while (k + j + 2 > sum_num / 2)
+            {
+                --k;
+                
+            }
+
         }
     }
-}
 
-#if  1
-int main()
-{
-    int counter = 0;
-    char words[20];
-    const char finished[] = "done";
-    while (strcmp(finished,words) != 0) //3.判断
+    size_t bs(vector<int> &vec, int &num)
     {
-        counter++;  //1.计数+1
-        std::cin >> words; //2.你输入
-        std::cin.get(); //
-
+        size_t index {};
+        size_t beg = 0;
+        size_t end = vec.size() - 1;
+        while (beg <= end)
+        {
+            index = (beg + end) / 2;
+            if (vec[index] == num)
+            {
+                return index;
+            }
+            else if (vec[index] > num)
+            {
+                end = index - 1;
+            }
+            else
+            {
+                beg = index + 1;
+            }
+        }
+        
+        //最后return end肯定比num小
+        return end;
     }
-    std::cout << counter - 1;
-}
-#endif
